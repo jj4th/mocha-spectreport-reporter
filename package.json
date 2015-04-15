@@ -1,0 +1,75 @@
+{
+  "name": "mocha-spectreport-reporter",
+  "version": "0.0.1-alpha",
+  "description": "A mocha reporter for use with Spectreport",
+  "main": "./lib/spectreport-reporter.min.js",
+  "scripts": {
+    "test": "gulp",
+    "build": "gulp build",
+    "coverage": "gulp coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jj4th/mocha-spectreport-reporter.git"
+  },
+  "keywords": [
+    "mocha",
+    "spectreport",
+    "test"
+  ],
+  "author": "John J. Andrichak IV",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jj4th/mocha-spectreport-reporter/issues"
+  },
+  "homepage": "https://github.com/jj4th/mocha-spectreport-reporter",
+  "devDependencies": {
+    "babel": "^4.7.12",
+    "babel-eslint": "^2.0.2",
+    "chai": "^2.1.2",
+    "del": "^1.1.1",
+    "eslint": "^0.17.0",
+    "esperanto": "^0.6.17",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^4.0.0",
+    "gulp-eslint": "^0.7.0",
+    "gulp-file": "^0.2.0",
+    "gulp-filter": "^2.0.2",
+    "gulp-istanbul": "^0.6.0",
+    "gulp-istanbul-enforcer": "^1.0.3",
+    "gulp-load-plugins": "^0.8.1",
+    "gulp-mocha": "^2.0.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-uglifyjs": "^0.6.1",
+    "isparta": "^2.2.0",
+    "mkdirp": "^0.5.0",
+    "mocha": "^2.2.1",
+    "proxyquire": "^1.4.0",
+    "sinon": "^1.14.1",
+    "sinon-as-promised": "^3.0.0",
+    "sinon-chai": "^2.7.0"
+  },
+  "to5BoilerplateOptions": {
+    "entryFileName": "index",
+    "exportVarName": "spectreport-reporter",
+    "mochaGlobals": [
+      "stub",
+      "spy",
+      "expect"
+    ]
+  },
+  "threshold": {
+    "statements": 100,
+    "branches": 100,
+    "lines": 100,
+    "functions": 100
+  },
+  "config": {
+    "loglevel": "silent"
+  },
+  "dependencies": {
+    "fs-extra": "^0.18.2"
+  }
+}
