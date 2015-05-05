@@ -2,8 +2,8 @@ const path = require('path');
 import Test from '../src/classes/test';
 
 describe('Spectreport Reporter', () => {
-    let spectreport, specReporterSpy, streamStub, fsStub,
-        utilStub, options, runner, runnerAlt;
+    let spectreport, specReporterSpy, streamStub,
+        fsStub, utilStub, options, runner, runnerAlt;
 
     before(() => {
         options = {};

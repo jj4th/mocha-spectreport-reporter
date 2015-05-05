@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 /**
  * Module dependencies.
  */
-const specReporter = require('mocha').reporters.Spec;
+const spec = require('mocha').reporters.Spec;
 
 import {screenshot, splitPath} from './util';
 import Suite from './classes/suite';
@@ -24,7 +24,7 @@ const defaults = {
  * @param {Runner} runner
  * @api public
  */
-function Spec(runner, options) {
+function SpectReporter(runner, options) {
     const opts = options.reporterOptions || {};
 
     // Handle options and setup defaults
@@ -41,7 +41,7 @@ function Spec(runner, options) {
 
     // Handle console output if requested, pass through to Spec reporter.
     if (opts.console) {
-        specReporter(runner, options);
+        spec.call(this, runner, options);
     }
 
     // Take screenshots of failed tests if requested
@@ -90,4 +90,4 @@ function Spec(runner, options) {
     });
 }
 
-export default Spec;
+export default SpectReporter;
