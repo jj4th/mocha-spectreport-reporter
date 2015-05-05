@@ -11,7 +11,7 @@ const isparta     = require('isparta');
 const esperanto   = require('esperanto');
 
 const manifest          = require('./package.json');
-const config            = manifest.to5BoilerplateOptions;
+const config            = manifest.taskConfig;
 const threshold         = manifest.threshold;
 const mainFile          = manifest.main;
 const destinationFolder = path.dirname(mainFile);
@@ -67,18 +67,28 @@ gulp.task('lint-test', function() {
 
 // Build two versions of the library
 gulp.task('build', ['lint-src', 'clean'], function(done) {
+  esperanto.bundle({
+    base: 'src',
+    entry: config.entryFileName,
+  }).then(function(bundle) {
+    var res = bundle.toUmd({
+      sourceMap: 'inline',
+      sourceMapFile: exportFileName + '.js.map',
+      name: config.exportVarName
+    });
     // Write the generated sourcemap
     mkdirp.sync(destinationFolder);
 
-    gulp.src([srcPath])
+    $.file(exportFileName + '.js', res.code, { src: true })
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.babel({ blacklist: ['useStrict'] }))
-      .pipe($.concat(exportFileName + '.min.js'))
+      .pipe($.rename(exportFileName + '.min.js'))
       .pipe($.uglify())
-      .pipe($.sourcemaps.write('./', {addComment: false}))
+      .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
       .on('end', done);
+  });
 });
 
 gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
