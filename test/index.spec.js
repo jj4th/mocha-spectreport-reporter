@@ -39,9 +39,7 @@ describe('Spectreport Reporter', () => {
 
         before((done) => {
             runner = f.mochaFixtures().runner;
-            spectreport(runner, {
-                reporterOptions: options
-            });
+            spectreport(runner, {});
             runner.run(() => {
                 json = streamStub.write.args[0][0];
                 results = JSON.parse(json);

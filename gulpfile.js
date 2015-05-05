@@ -15,7 +15,7 @@ const config            = manifest.to5BoilerplateOptions;
 const threshold         = manifest.threshold;
 const mainFile          = manifest.main;
 const destinationFolder = path.dirname(mainFile);
-const exportFileName    = path.basename(mainFile, path.extname(mainFile));
+const exportFileName    = path.basename(mainFile, '.min.js');
 
 const srcPath           = 'src/**/*.js';
 const testPath          = 'test/**/*.spec.js';
@@ -67,37 +67,18 @@ gulp.task('lint-test', function() {
 
 // Build two versions of the library
 gulp.task('build', ['lint-src', 'clean'], function(done) {
-  esperanto.bundle({
-    base: 'src',
-    entry: config.entryFileName
-  }).then(function(bundle) {
-    var res = bundle.toUmd({
-      sourceMap: true,
-      sourceMapSource: config.entryFileName + '.js',
-      sourceMapFile: exportFileName + '.js',
-      name: config.exportVarName
-    });
-
     // Write the generated sourcemap
     mkdirp.sync(destinationFolder);
-    var sourceFile = path.join(destinationFolder, exportFileName + '.js');
-    fs.writeFileSync(sourceFile, res.map.toString());
 
-    $.file(exportFileName + '.js', res.code, { src: true })
+    gulp.src([srcPath])
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.babel({ blacklist: ['useStrict'] }))
+      .pipe($.concat(exportFileName + '.min.js'))
+      .pipe($.uglify())
       .pipe($.sourcemaps.write('./', {addComment: false}))
       .pipe(gulp.dest(destinationFolder))
-      .pipe($.filter(['*', '!**/*.js.map']))
-      .pipe($.rename(exportFileName + '.min.js'))
-      .pipe($.uglifyjs({
-        outSourceMap: true,
-        inSourceMap: destinationFolder + '/' + exportFileName + '.js.map'
-      }))
-      .pipe(gulp.dest(destinationFolder))
       .on('end', done);
-  });
 });
 
 gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {

@@ -4,7 +4,7 @@
   "description": "A mocha reporter for use with Spectreport",
   "main": "./lib/spectreport-reporter.min.js",
   "scripts": {
-    "test": "gulp",
+    "test": "gulp test",
     "build": "gulp build",
     "coverage": "gulp coverage"
   },
@@ -32,6 +32,7 @@
     "esperanto": "^0.6.17",
     "gulp": "^3.8.11",
     "gulp-babel": "^4.0.0",
+    "gulp-concat": "^2.5.2",
     "gulp-eslint": "^0.7.0",
     "gulp-file": "^0.2.0",
     "gulp-filter": "^2.0.2",
@@ -42,7 +43,7 @@
     "gulp-plumber": "^1.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-sourcemaps": "^1.5.0",
-    "gulp-uglifyjs": "^0.6.1",
+    "gulp-uglify": "^1.2.0",
     "isparta": "^2.2.0",
     "mkdirp": "^0.5.0",
     "mocha": "^2.2.1",
@@ -52,8 +53,7 @@
     "sinon-chai": "^2.7.0"
   },
   "to5BoilerplateOptions": {
-    "entryFileName": "index",
-    "exportVarName": "spectreport-reporter",
+    "exportVarName": "spectreportReporter",
     "mochaGlobals": [
       "stub",
       "spy",
