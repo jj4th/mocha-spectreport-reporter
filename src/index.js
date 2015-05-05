@@ -1,11 +1,11 @@
 const fs = require('fs-extra');
-const util = require('./util');
 
 /**
  * Module dependencies.
  */
-const specReporter = require('../node_modules/mocha/lib/reporters/spec');
+const specReporter = require('mocha').reporters.Spec;
 
+import {screenshot, splitPath} from './util';
 import Suite from './classes/suite';
 import Test from './classes/test';
 
@@ -36,7 +36,7 @@ function Spec(runner, options) {
 
     const storyPath = runner.suite.file;
 
-    const [outputPath, outputFilename] = util.splitPath(storyPath,
+    const [outputPath, outputFilename] = splitPath(storyPath,
         opts.storyDir, opts.outputDir);
 
     // Handle console output if requested, pass through to Spec reporter.
@@ -47,7 +47,7 @@ function Spec(runner, options) {
     // Take screenshots of failed tests if requested
     if (opts.screenshot) {
         runner.on('fail', test => {
-            util.screenshot(test, opts.screenshotDir);
+            screenshot(test, opts.screenshotDir);
         });
     }
 

@@ -30,7 +30,7 @@ describe('Spectreport Reporter', () => {
         spectreport = proxyquire(path.join(__dirname, '../src/index'), {
             'fs-extra': fsStub,
             './util': utilStub,
-            '../node_modules/mocha/lib/reporters/spec': specReporterSpy
+            'mocha': {'reporters': {'Spec': specReporterSpy}}
         });
     });
 
@@ -186,7 +186,8 @@ describe('Spectreport Reporter', () => {
     describe('Custom Options', () => {
         before((done) => {
             fsStub.createWriteStream.reset();
-            utilStub.splitPath = sinon.stub().returns([
+            utilStub.splitPath.reset();
+            utilStub.splitPath.returns([
                 f.spec.outputPathAlt,
                 f.spec.outputFilenameAlt
             ]);
