@@ -91,7 +91,7 @@ describe('Suite class', () => {
         });
 
         it('should return true when it does have tests', () => {
-            suiteTest.tests.push(f.testPass);
+            suiteTest.stats.tests = 1;
             expect(suiteTest.hasTests()).to.be.true;
         });
     });

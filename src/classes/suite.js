@@ -31,7 +31,7 @@ class Suite {
         }
     }
     hasTests() {
-        return (this.tests.length > 0);
+        return (this.stats.tests > 0);
     }
     start () {
         this.stats.timeStart = Date.now();
@@ -44,9 +44,15 @@ class Suite {
         this.stats.duration = Math.round((this.stats.timeStop - this.stats.timeStart) / 10) / 100;
     }
     toJSON() {
-        var clone = Object.assign({}, this);
-        clone.parent = undefined;
-        return clone;
+        // Generate a clean, shallow copy without the parent
+        var copy = {};
+
+        for (let key of Object.keys(this)) {
+            copy[key] = this[key];
+        }
+        copy.parent = undefined;
+
+        return copy;
     }
 }
 

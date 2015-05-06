@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const path = require('path');
 
 /**
  * Takes a screenshot of a failed test and returns the relative path
@@ -16,7 +17,7 @@ export function screenshot(test, dir) {
 
     /*global browser*/
     browser.takeScreenshot().then(png => {
-        let stream = fs.createWriteStream(screenshotPath);
+        let stream = fs.createOuputStream(screenshotPath);
 
         stream.write(new Buffer(png, 'base64'));
         stream.end();
@@ -26,9 +27,7 @@ export function screenshot(test, dir) {
 }
 
 /**
- * Starting from haystack in the path, clear everything up to and including
- * the search string, then prepend the replace string, and return a path and
- * a filename
+ * For haystack underneath the search directory
  *
  * @param "String" haystack
  * @param "String" search
@@ -38,10 +37,9 @@ export function screenshot(test, dir) {
  */
 
 export function splitPath(haystack, search, replace) {
-    let relative = replace + haystack.split(search)[1];
-    let tokens = relative.split('/');
-    let filename = tokens.pop();
-    let path = tokens.join('/');
+    var searchPath = path.resolve(search);
+    var relative = path.relative(searchPath, haystack);
+    var fullPath = path.resolve(replace, relative);
 
-    return [path, filename];
+    return [path.dirname(fullPath), path.basename(fullPath)];
 }

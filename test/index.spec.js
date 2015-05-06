@@ -2,49 +2,44 @@ const path = require('path');
 import Test from '../src/classes/test';
 
 describe('Spectreport Reporter', () => {
-    let spectreport, specReporterSpy, streamStub,
-        fsStub, utilStub, options, runner, runnerAlt;
+    let Spectreport, specReporterSpy, baseReporterSpy, outputJsonSync,
+        splitPath, screenshot, options, spec, runner, runnerAlt;
 
     before(() => {
         options = {};
-        streamStub = {
-            write: sinon.spy(),
-            end: sinon.spy()
-        };
 
-        fsStub = {
-            createWriteStream: sinon.stub().returns(streamStub)
-        };
+        splitPath = sinon.stub().returns([
+            f.spec.outputPath,
+            f.spec.outputFilename
+        ]);
 
-        utilStub = {
-            splitPath: sinon.stub().returns([
-                f.spec.outputPath,
-                f.spec.outputFilename
-            ]),
-            screenshot: sinon.spy()
-        };
-
+        screenshot = sinon.spy();
+        outputJsonSync = sinon.spy();
+        baseReporterSpy = sinon.spy();
         specReporterSpy = sinon.spy();
 
         // Rewire stub dependencies
-        spectreport = proxyquire(path.join(__dirname, '../src/index'), {
-            'fs-extra': fsStub,
-            './util': utilStub,
-            'mocha': {'reporters': {'Spec': specReporterSpy}}
+        Spectreport = proxyquire(path.join(__dirname, '../src/index'), {
+            'fs-extra': {'outputJsonSync': outputJsonSync},
+            './util': {'splitPath': splitPath, 'screenshot': screenshot},
+            'mocha': {'reporters': {'Spec': specReporterSpy, 'Base': baseReporterSpy}}
         });
     });
 
     describe('Base Reporter', () => {
-        let json, results;
+        let results;
 
         before((done) => {
             runner = f.mochaFixtures().runner;
-            spectreport(runner, {});
+            spec = new Spectreport(runner, {});
             runner.run(() => {
-                json = streamStub.write.args[0][0];
-                results = JSON.parse(json);
+                results = outputJsonSync.args[0][1];
                 done();
             });
+        });
+
+        it('should properly initialize Spectreport', () => {
+            expect(spec).to.not.be.null;
         });
 
         it('should not invoke the Spec reporter', () => {
@@ -52,15 +47,15 @@ describe('Spectreport Reporter', () => {
         });
 
         it('should not invoke the Screenshot reporter', () => {
-            expect(specReporterSpy).to.have.been.not.called;
+            expect(screenshot).to.have.been.not.called;
         });
 
         it('should output to the expected file path', () => {
-            expect(utilStub.splitPath).to.have.been.calledOnce;
-            expect(utilStub.splitPath).to.have.been.calledWith(f.spec.path,
+            expect(splitPath).to.have.been.calledOnce;
+            expect(splitPath).to.have.been.calledWith(f.spec.path,
                 f.spec.storyDir, f.spec.outputDir);
-            expect(fsStub.createWriteStream).to.have.been.calledOnce;
-            expect(fsStub.createWriteStream).to.have.been.calledWith(f.spec.outputJSON);
+            expect(outputJsonSync).to.have.been.calledOnce;
+            expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSON);
         });
 
         it('should have the correct root suite', () => {
@@ -111,7 +106,7 @@ describe('Spectreport Reporter', () => {
         it('should have one passed test in the first suite', () => {
             let testPass = results.suites[0].tests[0];
             expect(testPass).to.have.property('title', f.testPass.title);
-            expect(testPass).to.have.property('duration', 0.06);
+            expect(testPass).to.have.property('duration').within(0.06, 0.07);
             expect(testPass).to.have.property('status', Test.TEST_PASS);
         });
 
@@ -124,7 +119,100 @@ describe('Spectreport Reporter', () => {
         it('should have one failed test in the second suite', () => {
             let testFail = results.suites[1].tests[0];
             expect(testFail).to.have.property('title', f.testFail.title);
-            expect(testFail).to.have.property('duration', 0.04);
+            expect(testFail).to.have.property('duration').within(0.03, 0.04);
+            expect(testFail).to.have.property('status', Test.TEST_FAIL);
+            expect(testFail).to.have.property('error')
+                .to.have.property('message', 'There was an error');
+            expect(testFail).to.have.property('error')
+                .to.have.property('stack').to.contain('Error: There was an error');
+        });
+    });
+
+    describe('Protractor Multi-suite', () => {
+        let results;
+
+        before((done) => {
+            outputJsonSync.reset();
+            splitPath.reset();
+
+            runner = f.protractorFixtures().runner;
+            spec = new Spectreport(runner, {});
+            runner.run(() => {
+                results = outputJsonSync.args[0][1];
+                done();
+            });
+        });
+
+        it('should output to the expected file path', () => {
+            expect(splitPath).to.have.been.calledOnce;
+            expect(splitPath).to.have.been.calledWith(f.spec.path,
+                f.spec.storyDir, f.spec.outputDir);
+            expect(outputJsonSync).to.have.been.calledOnce;
+            expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSON);
+        });
+
+        it('should have the correct root suite', () => {
+            expect(results).to.have.property('title', f.suite.title);
+        });
+
+        it('should have the correct root suite stats', () => {
+            expect(results).to.have.property('stats')
+                .to.have.property('tests', 3);
+            expect(results).to.have.property('stats')
+                .to.have.property('pending', 1);
+            expect(results).to.have.property('stats')
+                .to.have.property('failures', 1);
+            expect(results).to.have.property('stats')
+                .to.have.property('duration').within(0.1, 0.2);
+        });
+
+        it('should have two child suites', () => {
+            expect(results).to.have.property('suites').to.have.length(2);
+        });
+
+        it('should have the correct first child suite stats', () => {
+            let firstChild = results.suites[0];
+
+            expect(firstChild).to.have.property('stats')
+                .to.have.property('tests', 2);
+            expect(firstChild).to.have.property('stats')
+                .to.have.property('pending', 1);
+            expect(firstChild).to.have.property('stats')
+                .to.have.property('failures', 0);
+            expect(firstChild).to.have.property('stats')
+                .to.have.property('duration').within(0.06, 0.08);
+        });
+
+        it('should have the correct second child suite stats', () => {
+            let secondChild = results.suites[1];
+
+            expect(secondChild).to.have.property('stats')
+                .to.have.property('tests', 1);
+            expect(secondChild).to.have.property('stats')
+                .to.have.property('pending', 0);
+            expect(secondChild).to.have.property('stats')
+                .to.have.property('failures', 1);
+            expect(secondChild).to.have.property('stats')
+                .to.have.property('duration').within(0.03, 0.05);
+        });
+
+        it('should have one passed test in the first suite', () => {
+            let testPass = results.suites[0].tests[0];
+            expect(testPass).to.have.property('title', f.testPass.title);
+            expect(testPass).to.have.property('duration').within(0.06, 0.07);
+            expect(testPass).to.have.property('status', Test.TEST_PASS);
+        });
+
+        it('should have one pending test in the first suite', () => {
+            let testPending = results.suites[0].tests[1];
+            expect(testPending).to.have.property('title', f.testPending.title);
+            expect(testPending).to.have.property('status', Test.TEST_PENDING);
+        });
+
+        it('should have one failed test in the second suite', () => {
+            let testFail = results.suites[1].tests[0];
+            expect(testFail).to.have.property('title', f.testFail.title);
+            expect(testFail).to.have.property('duration').within(0.03, 0.04);
             expect(testFail).to.have.property('status', Test.TEST_FAIL);
             expect(testFail).to.have.property('error')
                 .to.have.property('message', 'There was an error');
@@ -138,7 +226,7 @@ describe('Spectreport Reporter', () => {
             options.console = true;
 
             runner = f.mochaFixtures().runner;
-            spectreport(runner, {
+            spec = new Spectreport(runner, {
                 reporterOptions: options
             });
             runner.run(() => {
@@ -148,9 +236,7 @@ describe('Spectreport Reporter', () => {
 
         it('should invoke the Spec reporter', () => {
             expect(specReporterSpy).to.have.been.calledOnce;
-            expect(specReporterSpy).to.have.been.calledWith(runner, {
-                reporterOptions: options
-            });
+            expect(specReporterSpy).to.have.been.calledWith(runner);
         });
 
     });
@@ -165,7 +251,7 @@ describe('Spectreport Reporter', () => {
 
             mocha = f.mochaFixtures();
             runner = mocha.runner;
-            spectreport(runner, {
+            spec = new Spectreport(runner, {
                 reporterOptions: options
             });
             runner.run(() => {
@@ -174,9 +260,9 @@ describe('Spectreport Reporter', () => {
         });
 
         it('should invoke the Screenshot reporter', () => {
-            let args = utilStub.screenshot.args[0];
+            let args = screenshot.args[0];
 
-            expect(utilStub.screenshot).to.have.been.calledOnce;
+            expect(screenshot).to.have.been.calledOnce;
             expect(args[0]).to.include(mocha.testFail);
             expect(args[1]).to.equal(f.screenshot.dir);
         });
@@ -185,13 +271,13 @@ describe('Spectreport Reporter', () => {
 
     describe('Custom Options', () => {
         before((done) => {
-            fsStub.createWriteStream.reset();
-            utilStub.splitPath.reset();
-            utilStub.splitPath.returns([
+            outputJsonSync.reset();
+            splitPath.reset();
+            splitPath.returns([
                 f.spec.outputPathAlt,
                 f.spec.outputFilenameAlt
             ]);
-            utilStub.screenshot.reset();
+            screenshot.reset();
 
             options = {
                 outputDir: f.spec.outputDirAlt,
@@ -201,7 +287,7 @@ describe('Spectreport Reporter', () => {
             };
 
             runnerAlt = f.mochaFixtures(f.spec.pathAlt).runner;
-            spectreport(runnerAlt, {
+            spec = new Spectreport(runnerAlt, {
                 reporterOptions: options
             });
             runnerAlt.run(() => {
@@ -210,17 +296,17 @@ describe('Spectreport Reporter', () => {
         });
 
         it('should output to a different file path', () => {
-            expect(utilStub.splitPath).to.have.been.calledOnce;
-            expect(utilStub.splitPath).to.have.been.calledWith(f.spec.pathAlt,
+            expect(splitPath).to.have.been.calledOnce;
+            expect(splitPath).to.have.been.calledWith(f.spec.pathAlt,
                 f.spec.storyDirAlt, f.spec.outputDirAlt);
-            expect(fsStub.createWriteStream).to.have.been.calledOnce;
-            expect(fsStub.createWriteStream).to.have.been.calledWith(f.spec.outputJSONAlt);
+            expect(outputJsonSync).to.have.been.calledOnce;
+            expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSONAlt);
         });
 
         it('should screenshot to a different file path', () => {
-            let args = utilStub.screenshot.args[0];
+            let args = screenshot.args[0];
 
-            expect(utilStub.screenshot).to.have.been.calledOnce;
+            expect(screenshot).to.have.been.calledOnce;
             expect(args[1]).to.equal(f.screenshot.dirAlt);
         });
     });

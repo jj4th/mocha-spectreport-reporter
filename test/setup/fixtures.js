@@ -112,6 +112,38 @@ const fixtures = {
         obj.runner = new Runner(obj.suite);
 
         return obj;
+    },
+    protractorFixtures(specPath) {
+        var obj = {}
+        obj.root = new Suite('', '');
+        obj.suite = new Suite(fixtures.suite.title, obj.root);
+        obj.suite.file = specPath || fixtures.spec.path;
+        obj.root.addSuite(obj.suite)
+
+        obj.suiteChild1 = new Suite(fixtures.suiteChild.title, obj.suite);
+        obj.suiteChild2 = new Suite(fixtures.suiteChild.title, obj.suite);
+        obj.suite.addSuite(obj.suiteChild1);
+        obj.suite.addSuite(obj.suiteChild2);
+
+        obj.testPass = new Test(fixtures.testPass.title, done => {
+            setTimeout(() => {
+                done();
+            }, 62);
+        });
+        obj.testPending = new Test(fixtures.testPending.title);
+        obj.testFail = new Test(fixtures.testFail.title, done => {
+            setTimeout(() => {
+                done(new Error(fixtures.testFailError.message));
+            }, 38);
+        });
+
+        obj.suiteChild1.addTest(obj.testPass);
+        obj.suiteChild1.addTest(obj.testPending);
+        obj.suiteChild2.addTest(obj.testFail);
+
+        obj.runner = new Runner(obj.root);
+
+        return obj;
     }
 };
 
