@@ -1,5 +1,5 @@
 const path = require('path');
-import Test from '../src/classes/test';
+import Test from 'spectreport';
 
 describe('Spectreport Reporter', () => {
     let Spectreport, specReporterSpy, baseReporterSpy, outputJsonSync,
@@ -218,6 +218,23 @@ describe('Spectreport Reporter', () => {
                 .to.have.property('message', 'There was an error');
             expect(testFail).to.have.property('error')
                 .to.have.property('stack').to.contain('Error: There was an error');
+        });
+    });
+
+    describe('Blank Suite', () => {
+        before((done) => {
+            outputJsonSync.reset();
+            splitPath.reset();
+
+            runner = f.blankFixture().runner;
+            spec = new Spectreport(runner, {});
+            runner.run(() => {
+                done();
+            });
+        });
+
+        it('should not try to write json', () => {
+            expect(outputJsonSync).to.have.not.been.called;
         });
     });
 

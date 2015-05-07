@@ -8,15 +8,16 @@ const Spec = mocha.reporters.Spec;
 const Base = mocha.reporters.Base;
 
 import {screenshot, splitPath} from './util';
-import Suite from './classes/suite';
-import Test from './classes/test';
+import Spectreport from 'spectreport';
+const Suite = Spectreport.Suite;
+const Test = Spectreport.Test;
 
 /**
  * Default values
  */
 const defaults = {
     screenshotDir: 'test/screenshot',
-    outputDir: 'test/output',
+    outputDir: 'test/results',
     storyDir: 'test/stories'
 };
 
@@ -89,10 +90,12 @@ class SpectReporter extends Base {
         });
 
         runner.on('end', () => {
-            curSuite.stop(); // End the current suite again.
+            if(curSuite && curSuite.hasTests()) {
+                curSuite.stop(); // End the current suite again.
 
-            let jsonFilename = outputFilename.replace('.js', '.json');
-            fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
+                let jsonFilename = outputFilename.replace('.js', '.json');
+                fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
+            }
         });
     }
 }
