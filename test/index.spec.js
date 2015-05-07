@@ -221,6 +221,23 @@ describe('Spectreport Reporter', () => {
         });
     });
 
+    describe('Blank Suite', () => {
+        before((done) => {
+            outputJsonSync.reset();
+            splitPath.reset();
+
+            runner = f.blankFixture().runner;
+            spec = new Spectreport(runner, {});
+            runner.run(() => {
+                done();
+            });
+        });
+
+        it('should not try to write json', () => {
+            expect(outputJsonSync).to.have.not.been.called;
+        });
+    });
+
     describe('Console enabled', () => {
         before((done) => {
             options.console = true;

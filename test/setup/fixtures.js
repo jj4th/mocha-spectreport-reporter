@@ -144,6 +144,14 @@ const fixtures = {
         obj.runner = new Runner(obj.root);
 
         return obj;
+    },
+    blankFixture(specPath) {
+        var obj = {}
+        obj.root = new Suite('', '');
+        obj.root.file = specPath || fixtures.spec.path;
+        obj.runner = new Runner(obj.root);
+
+        return obj;
     }
 };
 
