@@ -89,10 +89,12 @@ class SpectReporter extends Base {
         });
 
         runner.on('end', () => {
-            curSuite.stop(); // End the current suite again.
+            if(curSuite && curSuite.hasTests()) {
+                curSuite.stop(); // End the current suite again.
 
-            let jsonFilename = outputFilename.replace('.js', '.json');
-            fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
+                let jsonFilename = outputFilename.replace('.js', '.json');
+                fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
+            }
         });
     }
 }
