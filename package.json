@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "fs-extra": "^0.18.2",
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "spectreport": "^0.0.1"
   }
 }
