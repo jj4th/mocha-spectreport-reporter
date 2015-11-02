@@ -72,16 +72,16 @@ const fixtures = {
     spec: {
         path: 'test/stories/suite/test.spec.js',
         storyDir: 'test/stories',
-        outputDir: 'test/output',
+        outputDir: 'test/results',
         outputFilename: 'test.spec.js',
-        outputPath: 'test/output/suite',
-        outputJSON: 'test/output/suite/test.spec.json',
+        outputPath: 'test/results/suite',
+        outputJSON: 'test/results/suite/test.spec.json',
         pathAlt: 'test/specs/suite/testAlt.spec.js',
         storyDirAlt: 'test/specs',
-        outputDirAlt: 'test/results',
+        outputDirAlt: 'test/output',
         outputFilenameAlt: 'testAlt.spec.js',
-        outputPathAlt: 'test/results/suite',
-        outputJSONAlt: 'test/results/suite/testAlt.spec.json'
+        outputPathAlt: 'test/output/suite',
+        outputJSONAlt: 'test/output/suite/testAlt.spec.json'
     },
     mochaFixtures(specPath) {
         var obj = {}

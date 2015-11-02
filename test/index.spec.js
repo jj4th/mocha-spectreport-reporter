@@ -1,5 +1,5 @@
 const path = require('path');
-import Test from '../src/classes/test';
+import Test from 'spectreport';
 
 describe('Spectreport Reporter', () => {
     let Spectreport, specReporterSpy, baseReporterSpy, outputJsonSync,
