@@ -41,6 +41,9 @@ class SpectReporter extends Base {
         // Handle console output if requested, pass through to Spec reporter.
         if (opts.console) {
             Spec.call(this, runner);
+        } else {
+            Base.call(this, runner);
+            //runner.on('end', this.epilogue.bind(this));
         }
 
         // Take screenshots of failed tests if requested

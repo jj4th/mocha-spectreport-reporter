@@ -46,6 +46,11 @@ describe('Spectreport Reporter', () => {
             expect(specReporterSpy).to.have.been.not.called;
         });
 
+        it('should invoke the Base reporter', () => {
+            expect(baseReporterSpy).to.have.been.calledOnce;
+            expect(baseReporterSpy).to.have.been.calledWith(runner);
+        });
+
         it('should not invoke the Screenshot reporter', () => {
             expect(screenshot).to.have.been.not.called;
         });
@@ -100,7 +105,7 @@ describe('Spectreport Reporter', () => {
             expect(secondChild).to.have.property('stats')
                 .to.have.property('failures', 1);
             expect(secondChild).to.have.property('stats')
-                .to.have.property('duration').within(0.03, 0.05);
+                .to.have.property('duration').within(0.03, 0.10);
         });
 
         it('should have one passed test in the first suite', () => {
