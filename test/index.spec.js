@@ -243,6 +243,27 @@ describe('Spectreport Reporter', () => {
         });
     });
 
+    describe('Emtpy JS File', () => {
+        before((done) => {
+            outputJsonSync.reset();
+            splitPath.reset();
+
+            runner = f.emptyFixture().runner;
+            spec = new Spectreport(runner, {});
+            runner.run(() => {
+                done();
+            });
+        });
+
+        it('should not call splitPath', () => {
+            expect(splitPath).to.have.not.been.called;
+        });
+
+        it('should not try to write json', () => {
+            expect(outputJsonSync).to.have.not.been.called;
+        });
+    });
+
     describe('Console enabled', () => {
         before((done) => {
             options.console = true;

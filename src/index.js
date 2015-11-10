@@ -30,6 +30,7 @@ const defaults = {
 class SpectReporter extends Base {
     constructor(runner, options) {
         const opts = options.reporterOptions || {};
+        let storyPath, outputPath, outputFilename;
 
         // Handle options and setup defaults
         opts.screenshotDir = opts.screenshotDir || defaults.screenshotDir;
@@ -54,10 +55,14 @@ class SpectReporter extends Base {
         }
 
         // Find the path for the output file, accomodate multi-suite sets.
-        const storyPath = runner.suite.file || runner.suite.suites[0].file;
+        storyPath = runner.suite.file || (runner.suite.suites[0] && runner.suite.suites[0].file);
 
-        const [outputPath, outputFilename] = splitPath(storyPath,
-            opts.storyDir, opts.outputDir);
+        // If there's no file, we can't continue.
+        if(!storyPath) {
+            return true;
+        }
+
+        [outputPath, outputFilename] = splitPath(storyPath, opts.storyDir, opts.outputDir);
 
         // Handle JSON output
 

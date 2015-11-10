@@ -152,6 +152,13 @@ const fixtures = {
         obj.runner = new Runner(obj.root);
 
         return obj;
+    },
+    emptyFixture() {
+        var obj = {}
+        obj.root = new Suite('', '');
+        obj.runner = new Runner(obj.root);
+
+        return obj;
     }
 };
 
