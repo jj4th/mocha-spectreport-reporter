@@ -27,7 +27,7 @@ const defaults = {
  * @param {Runner} runner
  * @api public
  */
-class SpectReporter extends Base {
+class SpectReporter {
     constructor(runner, options) {
         const opts = options.reporterOptions || {};
         let storyPath, outputPath, outputFilename;

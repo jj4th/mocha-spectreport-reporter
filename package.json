@@ -1,6 +1,6 @@
 {
   "name": "mocha-spectreport-reporter",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A mocha reporter for use with Spectreport",
   "main": "./lib/spectreport-reporter.min.js",
   "scripts": {
@@ -24,15 +24,15 @@
   },
   "homepage": "https://github.com/jj4th/mocha-spectreport-reporter",
   "devDependencies": {
-    "babel": "^4.7.12",
-    "babel-core": "^5.2.15",
+    "babel": "^5.8.29",
+    "babel-core": "^5.8.33",
     "babel-eslint": "^2.0.2",
+    "babel-runtime": "^6.0.14",
     "chai": "^2.1.2",
     "del": "^1.1.1",
     "eslint": "^0.17.0",
-    "esperanto": "^0.6.33",
     "gulp": "^3.8.11",
-    "gulp-babel": "^4.0.0",
+    "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.5.2",
     "gulp-eslint": "^0.7.0",
     "gulp-file": "^0.2.0",
@@ -49,6 +49,7 @@
     "mkdirp": "^0.5.0",
     "mocha": "^2.2.1",
     "proxyquire": "^1.4.0",
+    "rollup": "^0.15.0",
     "sinon": "^1.14.1",
     "sinon-as-promised": "^3.0.0",
     "sinon-chai": "^2.7.0",
@@ -56,7 +57,9 @@
   },
   "taskConfig": {
     "exportVarName": "spectreportReporter",
-    "entryFileName": "index",
+    "entryFileName": "src/index",
+    "assetSrc": "src/assets",
+    "assetDest": "lib/assets",
     "mochaGlobals": [
       "stub",
       "spy",
@@ -73,8 +76,8 @@
     "loglevel": "silent"
   },
   "dependencies": {
-    "fs-extra": "^0.18.2",
     "mocha": "^2.2.4",
+    "fs-extra": "^0.18.2",
     "spectreport": "^1.0.0"
   }
 }
