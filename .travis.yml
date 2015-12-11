@@ -6,3 +6,5 @@ before_install:
 - npm install -g gulp
 install:
 - travis_retry npm install
+after_success:
+- gulp coverage
