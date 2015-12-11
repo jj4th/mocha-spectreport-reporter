@@ -1,0 +1,8 @@
+sudo: false
+language: node_js
+node_js:
+- stable
+before_install:
+- npm install -g gulp
+install:
+- travis_retry npm install
