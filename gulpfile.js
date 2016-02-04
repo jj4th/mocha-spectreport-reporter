@@ -17,8 +17,6 @@ const mainFile          = manifest.main;
 const destinationFolder = path.dirname(mainFile);
 const exportFileName    = path.basename(mainFile, '.min.js');
 
-const assetSrc          = config.assetSrc;
-const assetDest         = config.assetDest;
 const srcPath           = 'src/**/*.js';
 const testPath          = 'test/**/*.spec.js';
 const setupPath         = 'test/setup/node.js';
@@ -69,31 +67,28 @@ gulp.task('lint-test', function() {
 
 // Build two versions of the library
 gulp.task('build', ['lint-src', 'clean'], function(done) {
+  mkdirp.sync(destinationFolder);
   rollup.rollup({
     entry: config.entryFileName + '.js',
+    external: ['fs-extra', 'spectreport', 'mocha']
   }).then(function(bundle) {
     var res = bundle.generate({
       sourceMap: 'inline',
       sourceMapFile: exportFileName + '.js',
       format: 'umd',
-      moduleName: config.exportVarName,
-      external: ['dot', 'fs-extra', 'babel-runtime']
+      moduleName: config.exportVarName
     });
-
-    mkdirp.sync(destinationFolder);
 
     $.file(exportFileName + '.js', res.code, { src: true })
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.babel({ blacklist: ['useStrict'], optional: ['runtime'] }))
+      .pipe($.babel({ blacklist: ['useStrict'] }))
       .pipe($.rename(exportFileName + '.min.js'))
       .pipe($.uglify())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
       .on('end', done);
   });
-  gulp.src([assetSrc + '/**/*'], { "base" : assetSrc})
-    .pipe(gulp.dest(assetDest));
 });
 
 gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
