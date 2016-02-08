@@ -41,10 +41,10 @@ class SpectReporter {
 
         // Handle console output if requested, pass through to Spec reporter.
         if (opts.console) {
-            Spec.call(this, runner);
+            this.reporter = new Spec(runner);
+        // Otherwise, register the default hooks on suite/test events
         } else {
-            Base.call(this, runner);
-            //runner.on('end', this.epilogue.bind(this));
+            this.reporter = new Base(runner);
         }
 
         // Take screenshots of failed tests if requested

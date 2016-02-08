@@ -70,7 +70,7 @@ gulp.task('build', ['lint-src', 'clean'], function(done) {
   mkdirp.sync(destinationFolder);
   rollup.rollup({
     entry: config.entryFileName + '.js',
-    external: ['fs-extra', 'spectreport', 'mocha']
+    external: ['spectreport', 'mocha', 'fs-extra']
   }).then(function(bundle) {
     var res = bundle.generate({
       sourceMap: 'inline',
