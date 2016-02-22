@@ -16,7 +16,7 @@ const Test = Spectreport.Test;
  * Default values
  */
 const defaults = {
-    screenshotDir: 'test/screenshot',
+    screenshotDir: 'test/screenshots',
     outputDir: 'test/results',
     storyDir: 'test/stories'
 };

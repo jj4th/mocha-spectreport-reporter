@@ -62,9 +62,9 @@ const fixtures = {
                 title: 'Suite Screenshot'
             }
         },
-        dir: 'test/screenshot',
+        dir: 'test/screenshots',
         dirAlt: 'test/screens',
-        path: 'test/screenshot/Suite_Screenshot_Test_Screenshot.png',
+        path: 'test/screenshots/Suite_Screenshot_Test_Screenshot.png',
         pathAlt: 'test/screens/Suite_Screenshot_Test_Screenshot.png',
         data: 'c2NyZWVuc2hvdC5wbmc=',
         base64: 'screenshot.png'
