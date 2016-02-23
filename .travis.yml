@@ -7,7 +7,7 @@ before_install:
 install:
 - travis_retry npm install
 after_success:
-- gulp coverage
+- gulp coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 before_deploy:
 - gulp build
 deploy:

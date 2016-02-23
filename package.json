@@ -29,6 +29,7 @@
     "babel-eslint": "^2.0.2",
     "babel-runtime": "^6.3.19",
     "chai": "^2.1.2",
+    "coveralls": "^2.11.6",
     "del": "^1.1.1",
     "eslint": "^0.17.0",
     "gulp": "^3.8.11",
