@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jj4th/mocha-spectreport-reporter.svg?branch=master)](https://travis-ci.org/jj4th/mocha-spectreport-reporter) [![Coverage Status](https://coveralls.io/repos/github/jj4th/mocha-spectreport-reporter/badge.svg?branch=master)](https://coveralls.io/github/jj4th/mocha-spectreport-reporter?branch=master)
+[![Build Status](https://travis-ci.org/jj4th/mocha-spectreport-reporter.svg?branch=master)](https://travis-ci.org/jj4th/mocha-spectreport-reporter) [![Coverage Status](https://coveralls.io/repos/github/jj4th/mocha-spectreport-reporter/badge.svg?branch=master)](https://coveralls.io/github/jj4th/mocha-spectreport-reporter?branch=master) [![devDependency Status](https://david-dm.org/jj4th/mocha-spectreport-reporter/dev-status.svg)](https://david-dm.org/jj4th/mocha-spectreport-reporter#info=devDependencies)
 
 # mocha-spectreport-reporter
 A mocha reporter for use with Spectreport.  This reporter generates .json test results from a mocha test run in a format understood by the Spectreport HTML report generator.  It also has support for console logging (provided by the mocha generic Spec reporter).
