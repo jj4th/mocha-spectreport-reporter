@@ -8,3 +8,13 @@ install:
 - travis_retry npm install
 after_success:
 - gulp coverage
+before_deploy:
+- gulp build
+deploy:
+  - provider: npm
+    email: j.andrichak@rackspace.com
+    skip_cleanup: true
+    on:
+      tags: true
+    api_key:
+      secure: PnqmtzvUru/k/fKY/VmQoy2qM+45M6LPzvpouNUrs4X4HHJHpYY0rQbFNI5Docx4dMiajhtQlV90mTlZ4V9yREHob2vlKtuAXNaOG2O8kF5cFTrws5s4wczEcCP1CGl+nXqu1AICVyhQZZfD1lguPsfeRU21DGkBraN7olvlhN8=
