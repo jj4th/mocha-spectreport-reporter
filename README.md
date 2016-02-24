@@ -15,8 +15,8 @@ $ npm install mocha-spectreport-reporter --save-dev
 
 You will need to tell mocha to use the reporter:
 ```shell
-$ mocha --reporter mocha-better-spec-reporter ... # and other options there
-$ mocha -R mocha-better-spec-reporter --reporter-options console=true,screenshots=true,...
+$ mocha --reporter mocha-spectreport-reporter ... # and other options there
+$ mocha -R mocha-spectreport-reporter --reporter-options console=true,screenshots=true,...
 ```
 
 If you are using protractor, add the reporter to the `mochaOpts` section of your protractor configuration file.
