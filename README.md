@@ -31,6 +31,26 @@ mochaOpts: {
 }
 ```
 
+## Special Note on syntax errors in test files.
+Mocha does not currently trap exceptions that occur upon requiring a test file.  This means that if you have you have a syntax error, reference error, dependency error, etc... in one of your test files outside of a test function block, mocha will never read the file, and this reporter will have no knowledge of that fact.  This is especially relevant projects that use some sort of sharding mechanism, like protractor running with multiple instances of selenium, or against a selenium grid.
+
+As a workaround, there is a contrib script included with this module at: `contrib/mocha-loadFiles-patch.js`.  This script monkey patches `Module._load` and `Mocha.prototype.loadFiles`, so it is included only as a workaround.
+
+If you are using a custom interface that does not use `Mocha.prototype.loadFiles` this patch will not work.
+
+Simply require this file at some point before running any of your tests, and it will alter mocha to generate failed tests instead of throwing errors.  This solution is known to work with Mocha 2.0 and above.
+
+```shell
+$ mocha -r 'mocha-spectreport-reporter/contrib/mocha-loadFiles-patch'
+```
+
+If you are using protractor, just require the file at the top of your protractor configuration file.
+
+```javascript
+require('mocha-spectreport-reporter/contrib/mocha-loadFiles-patch');
+exports.config = { ... }
+```
+
 ## Options
 This reporter supports a few options to customize your usage:
 
