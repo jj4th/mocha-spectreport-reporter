@@ -26,6 +26,11 @@ const fixtures = {
         stats: {},
         hasTests: () => { return true; }
     },
+    suiteChildAlt: {
+        title: 'Test Suite ChildAlt',
+        stats: {},
+        hasTests: () => { return true; }
+    },
     testPass: {
         title: 'Test Pass',
         fullTitle() {
@@ -113,15 +118,16 @@ const fixtures = {
 
         return obj;
     },
-    protractorFixtures(specPath) {
+    protractorFixtures() {
         var obj = {}
         obj.root = new Suite('', '');
         obj.suite = new Suite(fixtures.suite.title, obj.root);
-        obj.suite.file = specPath || fixtures.spec.path;
         obj.root.addSuite(obj.suite)
 
         obj.suiteChild1 = new Suite(fixtures.suiteChild.title, obj.suite);
-        obj.suiteChild2 = new Suite(fixtures.suiteChild.title, obj.suite);
+        obj.suiteChild1.file = fixtures.spec.path;
+        obj.suiteChild2 = new Suite(fixtures.suiteChildAlt.title, obj.suite);
+        obj.suiteChild2.file = fixtures.spec.pathAlt;
         obj.suite.addSuite(obj.suiteChild1);
         obj.suite.addSuite(obj.suiteChild2);
 

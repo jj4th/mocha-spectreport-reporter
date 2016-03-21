@@ -30,14 +30,12 @@ const defaults = {
 class SpectReporter {
     constructor(runner, options) {
         const opts = options.reporterOptions || {};
-        let storyPath, outputPath, outputFilename;
+        let outputPath, outputFilename, curSuite = null;
 
         // Handle options and setup defaults
         opts.screenshotDir = opts.screenshotDir || defaults.screenshotDir;
         opts.outputDir = opts.outputDir || defaults.outputDir;
         opts.storyDir = opts.storyDir || defaults.storyDir;
-
-        let curSuite = null;
 
         // Handle console output if requested, pass through to Spec reporter.
         if (opts.console) {
@@ -54,18 +52,6 @@ class SpectReporter {
             });
         }
 
-        // Find the path for the output file, accomodate multi-suite sets.
-        storyPath = runner.suite.file || (runner.suite.suites[0] && runner.suite.suites[0].file);
-
-        // If there's no file, we can't continue.
-        if(!storyPath) {
-            return true;
-        }
-
-        [outputPath, outputFilename] = splitPath(storyPath, opts.storyDir, opts.outputDir);
-
-        // Handle JSON output
-
         runner.on('suite', suite => {
             // In the case of protractor, skip the blank titled root suite.
             if (suite.title === '' && suite.suites.length === 1) {
@@ -77,6 +63,12 @@ class SpectReporter {
 
         runner.on('suite end', () => {
             curSuite.stop();
+
+            if(curSuite.file && (!curSuite.parent || curSuite.parent.file !== curSuite.file)) {
+                [outputPath, outputFilename] = splitPath(curSuite.file, opts.storyDir, opts.outputDir);
+                let jsonFilename = outputFilename.replace('.js', '.json');
+                fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
+            }
 
             if (curSuite.parent) {
                 let parent = curSuite.parent;
@@ -95,15 +87,6 @@ class SpectReporter {
 
         runner.on('fail', (test, err) => {
             curSuite.addTest(new Test(test, Test.TEST_FAIL, err));
-        });
-
-        runner.on('end', () => {
-            if(curSuite && curSuite.hasTests()) {
-                curSuite.stop(); // End the current suite again.
-
-                let jsonFilename = outputFilename.replace('.js', '.json');
-                fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
-            }
         });
     }
 }

@@ -8,10 +8,13 @@ describe('Spectreport Reporter', () => {
     before(() => {
         options = {};
 
-        splitPath = sinon.stub().returns([
-            f.spec.outputPath,
-            f.spec.outputFilename
-        ]);
+        splitPath = sinon.spy(function (filePath) {
+            if (filePath === f.spec.pathAlt) {
+                return [f.spec.outputPathAlt, f.spec.outputFilenameAlt];
+            }
+
+            return [f.spec.outputPath, f.spec.outputFilename];
+        });
 
         screenshot = sinon.spy();
         outputJsonSync = sinon.spy();
@@ -134,7 +137,7 @@ describe('Spectreport Reporter', () => {
     });
 
     describe('Protractor Multi-suite', () => {
-        let results;
+        let firstChild, secondChild;
 
         before((done) => {
             outputJsonSync.reset();
@@ -143,41 +146,32 @@ describe('Spectreport Reporter', () => {
             runner = f.protractorFixtures().runner;
             spec = new Spectreport(runner, {});
             runner.run(() => {
-                results = outputJsonSync.args[0][1];
+                firstChild = outputJsonSync.args[0][1];
+                secondChild = outputJsonSync.args[1][1];
                 done();
             });
         });
 
         it('should output to the expected file path', () => {
-            expect(splitPath).to.have.been.calledOnce;
+            expect(splitPath).to.have.been.calledTwice;
             expect(splitPath).to.have.been.calledWith(f.spec.path,
                 f.spec.storyDir, f.spec.outputDir);
-            expect(outputJsonSync).to.have.been.calledOnce;
+            expect(splitPath).to.have.been.calledWith(f.spec.pathAlt,
+                f.spec.storyDir, f.spec.outputDir);
+            expect(outputJsonSync).to.have.been.calledTwice;
             expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSON);
+            expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSONAlt);
         });
 
-        it('should have the correct root suite', () => {
-            expect(results).to.have.property('title', f.suite.title);
+        it('should have output the correct first suite', () => {
+            expect(firstChild).to.have.property('title', f.suiteChild.title);
         });
 
-        it('should have the correct root suite stats', () => {
-            expect(results).to.have.property('stats')
-                .to.have.property('tests', 3);
-            expect(results).to.have.property('stats')
-                .to.have.property('pending', 1);
-            expect(results).to.have.property('stats')
-                .to.have.property('failures', 1);
-            expect(results).to.have.property('stats')
-                .to.have.property('duration').within(0.1, 0.2);
-        });
-
-        it('should have two child suites', () => {
-            expect(results).to.have.property('suites').to.have.length(2);
+        it('should have output the correct second suite', () => {
+            expect(secondChild).to.have.property('title', f.suiteChildAlt.title);
         });
 
         it('should have the correct first child suite stats', () => {
-            let firstChild = results.suites[0];
-
             expect(firstChild).to.have.property('stats')
                 .to.have.property('tests', 2);
             expect(firstChild).to.have.property('stats')
@@ -189,8 +183,6 @@ describe('Spectreport Reporter', () => {
         });
 
         it('should have the correct second child suite stats', () => {
-            let secondChild = results.suites[1];
-
             expect(secondChild).to.have.property('stats')
                 .to.have.property('tests', 1);
             expect(secondChild).to.have.property('stats')
@@ -202,20 +194,20 @@ describe('Spectreport Reporter', () => {
         });
 
         it('should have one passed test in the first suite', () => {
-            let testPass = results.suites[0].tests[0];
+            let testPass = firstChild.tests[0];
             expect(testPass).to.have.property('title', f.testPass.title);
             expect(testPass).to.have.property('duration').within(0.06, 0.07);
             expect(testPass).to.have.property('status', Test.TEST_PASS);
         });
 
         it('should have one pending test in the first suite', () => {
-            let testPending = results.suites[0].tests[1];
+            let testPending = firstChild.tests[1];
             expect(testPending).to.have.property('title', f.testPending.title);
             expect(testPending).to.have.property('status', Test.TEST_PENDING);
         });
 
         it('should have one failed test in the second suite', () => {
-            let testFail = results.suites[1].tests[0];
+            let testFail = secondChild.tests[0];
             expect(testFail).to.have.property('title', f.testFail.title);
             expect(testFail).to.have.property('duration').within(0.03, 0.04);
             expect(testFail).to.have.property('status', Test.TEST_FAIL);
@@ -316,10 +308,6 @@ describe('Spectreport Reporter', () => {
         before((done) => {
             outputJsonSync.reset();
             splitPath.reset();
-            splitPath.returns([
-                f.spec.outputPathAlt,
-                f.spec.outputFilenameAlt
-            ]);
             screenshot.reset();
 
             options = {
