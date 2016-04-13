@@ -27,19 +27,21 @@ export function screenshot(test, dir) {
 }
 
 /**
- * For haystack underneath the search directory
+ * For filePath underneath the srcPath directory
+ *   replace srcPath with destPath and return both the
+ *   new folder path, and the basename.
  *
- * @param "String" haystack
- * @param "String" search
- * @param "String" replace
+ * @param "String" filePath
+ * @param "String" srcPath
+ * @param "String" destPath
  * @return "String","String" relativePath, filename
  * @api private
  */
 
-export function splitPath(haystack, search, replace) {
-    var searchPath = path.resolve(search);
-    var relative = path.relative(searchPath, haystack);
-    var fullPath = path.resolve(replace, relative);
+export function splitPath(filePath, srcPath, destPath) {
+    var searchPath = path.resolve(srcPath);
+    var relative = path.relative(searchPath, filePath);
+    var fullPath = path.resolve(destPath, relative);
 
     return [path.dirname(fullPath), path.basename(fullPath)];
 }
