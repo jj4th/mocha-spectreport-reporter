@@ -45,3 +45,28 @@ export function splitPath(filePath, srcPath, destPath) {
 
     return [path.dirname(fullPath), path.basename(fullPath)];
 }
+
+/**
+ * For a suite which is missing a file field, recursively
+ * propagate the field from it's child suites or tests.
+ * This modifies the suite object in place.
+ *
+ * @param "Object" suite
+ * @return "Object" suite
+ * @api private
+ */
+
+export function fixFileField(suite) {
+    for (let childSuite of suite.suites) {
+        if (!childSuite.file) {
+            fixFileField(childSuite);
+        }
+    }
+    if (suite.tests[0] && suite.tests[0].file) {
+        suite.file = suite.tests[0].file;
+    } else if (suite.suites[0] && suite.suites[0].file) {
+        suite.file = suite.suites[0].file;
+    }
+
+    return suite;
+}

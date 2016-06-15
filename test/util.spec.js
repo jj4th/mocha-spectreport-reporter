@@ -67,4 +67,32 @@ describe('Utility Functions', () => {
             expect(filename).to.be.equal(spec.outputFilename);
         });
     });
+
+    describe('fixFileField', () => {
+        let obj, suite;
+
+        it('should set the file field on the suite from child suite', () => {
+            obj = f.pendingFixturesSuite();
+            suite = util.fixFileField(obj.suite);
+            expect(suite.file).to.be.equal(f.spec.pathPending);
+        });
+
+        it('should set the file field on the suite from child test', () => {
+            obj = f.pendingFixturesTest();
+            suite = util.fixFileField(obj.suite);
+            expect(suite.file).to.be.equal(f.spec.pathPending);
+        });
+
+        it('should set the file field on the suite from child suite test', () => {
+            obj = f.pendingFixturesChildTest();
+            suite = util.fixFileField(obj.suite);
+            expect(suite.file).to.be.equal(f.spec.pathPending);
+        });
+
+        it('should not throw an exception if no file is able to be propagated', () => {
+            obj = f.pendingFixturesNoFile();
+            suite = util.fixFileField(obj.suite);
+            expect(suite.file).to.be.undefined;
+        });
+    });
 });

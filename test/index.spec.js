@@ -3,17 +3,21 @@ import Test from 'spectreport';
 
 describe('Spectreport Reporter', () => {
     let Spectreport, specReporterSpy, baseReporterSpy, outputJsonSync,
-        splitPath, screenshot, options, spec, runner, runnerAlt;
+        fixFileField, splitPath, screenshot, options, spec, runner, runnerAlt;
 
     before(() => {
         options = {};
 
-        splitPath = sinon.spy(function (filePath) {
+        splitPath = sinon.spy((filePath) => {
             if (filePath === f.spec.pathAlt) {
                 return [f.spec.outputPathAlt, f.spec.outputFilenameAlt];
+            } else if (filePath === f.spec.pathPending) {
+                return [f.spec.outputPathPending, f.spec.outputFilenamePending];
             }
-
             return [f.spec.outputPath, f.spec.outputFilename];
+        });
+        fixFileField = sinon.spy((suite) => {
+            suite.file = f.spec.pathPending;
         });
 
         screenshot = sinon.spy();
@@ -24,7 +28,7 @@ describe('Spectreport Reporter', () => {
         // Rewire stub dependencies
         Spectreport = proxyquire(path.join(__dirname, '../src/index'), {
             'fs-extra': {'outputJsonSync': outputJsonSync},
-            './util': {'splitPath': splitPath, 'screenshot': screenshot},
+            './util': {'splitPath': splitPath, 'screenshot': screenshot, 'fixFileField': fixFileField},
             'mocha': {'reporters': {'Spec': specReporterSpy, 'Base': baseReporterSpy}}
         });
     });
@@ -232,6 +236,26 @@ describe('Spectreport Reporter', () => {
 
         it('should not try to write json', () => {
             expect(outputJsonSync).to.have.not.been.called;
+        });
+    });
+
+    describe('Pending Suite', () => {
+        before((done) => {
+            outputJsonSync.reset();
+
+            runner = f.pendingFixturesTest().runner;
+            spec = new Spectreport(runner, {});
+            runner.run(() => {
+                done();
+            });
+        });
+
+        it('should call fixFileField', () => {
+            expect(fixFileField).to.have.been.called;
+        });
+
+        it('should output to the correct file path', () => {
+            expect(outputJsonSync).to.have.been.calledWith(f.spec.outputJSONPending);
         });
     });
 

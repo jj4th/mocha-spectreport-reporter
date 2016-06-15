@@ -7,7 +7,7 @@ const mocha = require('mocha');
 const Spec = mocha.reporters.Spec;
 const Base = mocha.reporters.Base;
 
-import {screenshot, splitPath} from './util';
+import {screenshot, splitPath, fixFileField} from './util';
 import Spectreport from 'spectreport';
 const Suite = Spectreport.Suite;
 const Test = Spectreport.Test;
@@ -57,6 +57,12 @@ class SpectReporter {
             if (suite.title === '' && suite.suites.length === 1) {
                 return false;
             }
+
+            // In the case of pending suites, fix the file attribute.
+            if (suite.pending && !suite.file) {
+                fixFileField(suite);
+            }
+
             curSuite = new Suite(suite, curSuite);
             curSuite.start();
         });

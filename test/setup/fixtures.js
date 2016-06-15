@@ -16,6 +16,12 @@ const fixtures = {
         stats: {},
         hasTests: () => { return true; }
     },
+    suitePending: {
+        title: 'Test Pending Suite',
+        stats: {},
+        hasTests: () => { return true; },
+        pending: true
+    },
     suiteParent: {
         title: 'Test Suite Parent',
         stats: {},
@@ -86,7 +92,12 @@ const fixtures = {
         outputDirAlt: 'test/output',
         outputFilenameAlt: 'testAlt.spec.js',
         outputPathAlt: 'test/output/suite',
-        outputJSONAlt: 'test/output/suite/testAlt.spec.json'
+        outputJSONAlt: 'test/output/suite/testAlt.spec.json',
+        pathPending: 'test/stories/suite/testPending.spec.js',
+        outputDirPending: 'test/results',
+        outputFilenamePending: 'testPending.spec.js',
+        outputPathPending: 'test/results/suite',
+        outputJSONPending: 'test/results/suite/testPending.spec.json'
     },
     mochaFixtures(specPath) {
         var obj = {}
@@ -119,7 +130,7 @@ const fixtures = {
         return obj;
     },
     protractorFixtures() {
-        var obj = {}
+        var obj = {};
         obj.root = new Suite('', '');
         obj.suite = new Suite(fixtures.suite.title, obj.root);
         obj.root.addSuite(obj.suite)
@@ -151,8 +162,70 @@ const fixtures = {
 
         return obj;
     },
+    pendingFixturesSuite() {
+        var obj = {};
+        obj.root = new Suite('', '');
+        obj.suite = new Suite(fixtures.suitePending.title, obj.root);
+        obj.suite.pending = true;
+        obj.root.addSuite(obj.suite)
+
+        obj.suiteChild1 = new Suite(fixtures.suiteChild.title, obj.suite);
+        obj.suiteChild1.file = fixtures.spec.pathPending;
+        obj.suite.addSuite(obj.suiteChild1);
+
+        obj.runner = new Runner(obj.root);
+
+        return obj;
+    },
+    pendingFixturesTest() {
+        var obj = {};
+        obj.root = new Suite('', '');
+        obj.suite = new Suite(fixtures.suitePending.title, obj.root);
+        obj.suite.pending = true;
+        obj.root.addSuite(obj.suite)
+
+        obj.testPending = new Test(fixtures.testPending.title);
+        obj.testPending.file = fixtures.spec.pathPending;
+        obj.suite.addTest(obj.testPending);
+
+        obj.runner = new Runner(obj.root);
+
+        return obj;
+    },
+    pendingFixturesChildTest() {
+        var obj = {};
+        obj.root = new Suite('', '');
+        obj.suite = new Suite(fixtures.suitePending.title, obj.root);
+        obj.suite.pending = true;
+        obj.root.addSuite(obj.suite)
+
+        obj.suiteChild1 = new Suite(fixtures.suiteChild.title, obj.suite);
+        obj.suite.addSuite(obj.suiteChild1);
+
+        obj.testPending = new Test(fixtures.testPending.title);
+        obj.testPending.file = fixtures.spec.pathPending;
+        obj.suiteChild1.addTest(obj.testPending);
+
+        obj.runner = new Runner(obj.root);
+
+        return obj;
+    },
+    pendingFixturesNoFile() {
+        var obj = {};
+        obj.root = new Suite('', '');
+        obj.suite = new Suite(fixtures.suitePending.title, obj.root);
+        obj.suite.pending = true;
+        obj.root.addSuite(obj.suite)
+
+        obj.testPending = new Test(fixtures.testPending.title);
+        obj.suite.addTest(obj.testPending);
+
+        obj.runner = new Runner(obj.root);
+
+        return obj;
+    },
     blankFixture(specPath) {
-        var obj = {}
+        var obj = {};
         obj.root = new Suite('', '');
         obj.root.file = specPath || fixtures.spec.path;
         obj.runner = new Runner(obj.root);
@@ -160,7 +233,7 @@ const fixtures = {
         return obj;
     },
     emptyFixture() {
-        var obj = {}
+        var obj = {};
         obj.root = new Suite('', '');
         obj.runner = new Runner(obj.root);
 
