@@ -20,6 +20,7 @@ const exportFileName    = path.basename(mainFile, '.min.js');
 const srcPath           = 'src/**/*.js';
 const testPath          = 'test/**/*.spec.js';
 const setupPath         = 'test/setup/node.js';
+const watchPath         = [srcPath, 'test/**/*.js'];
 
 function test() {
   return gulp.src([setupPath, testPath], {read: false})
@@ -118,3 +119,8 @@ gulp.task('mocha', function() {
 
 // An alias of test
 gulp.task('default', ['test']);
+
+// Watcher
+gulp.task('watch', function () {
+  return gulp.watch(watchPath, ['coverage', 'build']);
+});
