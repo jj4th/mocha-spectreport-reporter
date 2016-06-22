@@ -1,6 +1,6 @@
 {
   "name": "mocha-spectreport-reporter",
-  "version": "1.4.6",
+  "version": "1.5.0",
   "description": "A mocha reporter for use with Spectreport",
   "main": "./lib/spectreport-reporter.min.js",
   "scripts": {

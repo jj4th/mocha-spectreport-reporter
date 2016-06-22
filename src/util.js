@@ -17,10 +17,7 @@ export function screenshot(test, dir) {
 
     /*global browser*/
     browser.takeScreenshot().then(png => {
-        let stream = fs.createOutputStream(screenshotPath);
-
-        stream.write(new Buffer(png, 'base64'));
-        stream.end();
+        fs.outputFile(screenshotPath, new Buffer(png, 'base64'));
     });
 
     return screenshotPath;
