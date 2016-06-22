@@ -2,7 +2,7 @@
 const path = require('path');
 
 describe('Utility Functions', () => {
-    let browserStub, streamStub, fsStub, ss, util;
+    let browserStub, fsStub, ss, util;
 
     before(() => {
         ss = f.screenshot;
@@ -10,12 +10,8 @@ describe('Utility Functions', () => {
         browserStub = {
             takeScreenshot: sinon.stub().resolves(ss.data)
         };
-        streamStub = {
-            write: sinon.spy(),
-            end: sinon.spy()
-        };
         fsStub = {
-            createOutputStream: sinon.stub().returns(streamStub)
+            outputFile: sinon.spy()
         };
 
         global.browser = browserStub;
@@ -38,11 +34,10 @@ describe('Utility Functions', () => {
         });
 
         it('should write the file to disk', () => {
-            let dataArg = String(streamStub.write.args[0][0]);
+            let dataArg = String(fsStub.outputFile.args[0][1]);
 
-            expect(fsStub.createOutputStream).to.have.been.calledOnce;
-            expect(fsStub.createOutputStream).to.have.been.calledWith(ss.path);
-            expect(streamStub.write).to.have.been.calledOnce;
+            expect(fsStub.outputFile).to.have.been.calledOnce;
+            expect(fsStub.outputFile).to.have.been.calledWith(ss.path);
             expect(dataArg).to.be.eql(ss.base64);
         });
 
