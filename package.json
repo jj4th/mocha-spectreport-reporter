@@ -75,8 +75,8 @@
     "loglevel": "silent"
   },
   "dependencies": {
+    "fs-extra": "^0.30.0",
     "mocha": "^2.2.4",
-    "fs-extra": "^0.18.2",
-    "spectreport": "^1.0.0"
+    "spectreport": "^1.2.10"
   }
 }
