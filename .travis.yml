@@ -17,4 +17,4 @@ deploy:
     on:
       tags: true
     api_key:
-      secure: PnqmtzvUru/k/fKY/VmQoy2qM+45M6LPzvpouNUrs4X4HHJHpYY0rQbFNI5Docx4dMiajhtQlV90mTlZ4V9yREHob2vlKtuAXNaOG2O8kF5cFTrws5s4wczEcCP1CGl+nXqu1AICVyhQZZfD1lguPsfeRU21DGkBraN7olvlhN8=
+      secure: nNyDVlg+R+Wc94MO2GBZJayMhUGR7smcM7gh5bfkSitJSS9mPm9Or5F18fYgWKSY5c4u2u5Mx+qAeAEN301izYd6qgBc78Nkhtd8NdQAzvamzAY8LgKzCrhyra2Ac7pq6Sw+/0rvGiLk5P9h1m555wSKuljh33V8UhanXYxL54o=
