@@ -72,7 +72,7 @@ class SpectReporter {
 
             if(curSuite.file && (!curSuite.parent || curSuite.parent.file !== curSuite.file)) {
                 [outputPath, outputFilename] = splitPath(curSuite.file, opts.storyDir, opts.outputDir);
-                let jsonFilename = outputFilename.replace('.js', '.json');
+                let jsonFilename = outputFilename += '.json';
                 fs.outputJsonSync(outputPath + '/' + jsonFilename, curSuite);
             }
 
