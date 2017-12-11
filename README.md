@@ -61,3 +61,5 @@ This reporter supports a few options to customize your usage:
 | storyDir | String | **"test/stories"** | Where the reporter will expect to find your stories, used to represent the directory heirarchy in the results |
 | screenshot | Boolean | **False** | If being used with Protractor, this will enable browser screenshots on failed tests |
 | screenshotDir | String | **"test/screenshots"** | The directory where screenshots will be stored if **True** |
+
+vandalism!!!!!
